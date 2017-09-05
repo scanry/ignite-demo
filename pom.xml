@@ -13,6 +13,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<ignite.version>2.1.0</ignite.version>
+		<java.version>1.8</java.version>
+		<encoding>UTF-8</encoding>
+		<slf4j>1.7.21</slf4j>
+		<logback>1.2.2</logback>
 	</properties>
 
 	<dependencies>
@@ -27,9 +31,28 @@
 			<version>${ignite.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.ignite</groupId>
-			<artifactId>ignite-indexing</artifactId>
-			<version>${ignite.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-access</artifactId>
+			<version>${logback}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -39,6 +62,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>ignite-demo</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -48,6 +72,44 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<!-- not append assembly id in release file name -->
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/package.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.4</version>
+				<configuration>
+					<!-- <serverId>docker-aliyun</serverId> <registryUrl>registry.cn-hangzhou.aliyuncs.com</registryUrl> -->
+					<pushImage>true</pushImage>
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+					<imageName>${artifactId}</imageName>
+					<imageTags>
+						<imageTag>${artifactId}</imageTag>
+					</imageTags>
+					<repository>${docker.repostory}</repository>
 				</configuration>
 			</plugin>
 		</plugins>
